@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="./assets/images/favicon-32x32.png"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,700;1,400;1,800&display=swap"
+      rel="stylesheet"
+    />
+    <title>Frontend Mentor | Age calculator app</title>
+
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        background-color: hsl(0, 0%, 94%);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+      }
+
+      .container {
+        width: 60%;
+        height: 65%;
+        text-align: center;
+        background-color: hsl(0, 0%, 100%);
+        margin: 0 auto;
+        padding: 20px;
+        border-radius: 16px 16px 90px 16px;
+        box-shadow: 0 0 1px hsl(0, 0%, 94%);
+      }
+
+      form {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        font-family: 'Poppins', sans-serif;
+        font-style: italic;
+        font-weight: 400;
+      }
+
+      .input-group {
+        width: 33.33%;
+        margin: 10px 5px;
+      }
+
+      .input {
+        width: 75%;
+        display: flex;
+        justify-content: flex-start;
+        height: 100%;
+      }
+
+      input {
+        border-radius: 10px;
+      }
+
+      .input-group label {
+        display: block;
+        margin-bottom: 5px;
+        text-align: left;
+        color: hsl(0, 1%, 44%);
+      }
+
+      .input-group input {
+        width: 100%;
+        padding: 8px;
+        box-sizing: border-box;
+        border: 1px solid hsl(0, 0%, 86%);
+        font-size: 1rem;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 800;
+      }
+
+      .input-group input.invalid {
+        border-color: hsl(0, 100%, 67%);
+        color: hsl(0, 100%, 67%);
+      }
+
+      .error-message {
+        color: hsl(0, 100%, 67%);
+        margin-top: 5px;
+        width: 100%;
+      }
+
+      button {
+        width: 50px;
+        height: 50px;
+        background-color: hsl(259, 100%, 65%);
+        color: hsl(0, 0%, 100%);
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        margin-top: 10px;
+      }
+
+      button:hover {
+        background-color: hsl(259, 100%, 40%);
+      }
+
+      .button-container {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .button-container button {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+      }
+
+      button[type='button'] .fas.fa-arrow-down {
+        font-size: 40px;
+        transform: scale(1.5);
+      }
+
+      .line {
+        flex-grow: 1;
+        height: 2px;
+        background-color: hsl(0, 0%, 94%);
+        margin: 0 10px;
+      }
+
+      #result {
+        font-weight: bold;
+        font-size: 60px;
+        text-align: left;
+        color: hsl(259, 100%, 65%);
+      }
+      .placeholder {
+        color: hsl(0, 0%, 8%);
+        font-family: 'Poppins', sans-serif;
+        font-weight: 800;
+        font-style: italic;
+      }
+
+      @media only screen and (min-width: 768px) and (max-width: 1024px) {
+        .container {
+          width: 60%;
+          height: 45%;
+        }
+        .input-group {
+          width: calc(100% - 20px);
+        }
+        .input {
+          width: 100%;
+        }
+        #result {
+          font-size: 3em;
+        }
+        .error-message {
+          font-size: 0.7rem;
+        }
+
+        button[type='button'] .fa-arrow-down {
+          font-size: 40px;
+          transform: scale(1.5);
+        }
+      }
+
+      @media screen and (max-width: 600px) {
+        .container {
+          width: 100%;
+          height: 50%;
+        }
+        .input-group {
+          width: calc(100% - 20px);
+        }
+        .input {
+          width: 100%;
+        }
+        #result {
+          font-size: 3em;
+        }
+        .error-message {
+          font-size: 0.7rem;
+        }
+      }
+    </style>
+
+    <script>
+      function calculateAge() {
+        const dayInput = document.getElementById('day');
+        const monthInput = document.getElementById('month');
+        const yearInput = document.getElementById('year');
+        const resultDiv = document.getElementById('result');
+
+        resetValidationStyles();
+
+        const day = parseInt(dayInput.value, 10);
+        const month = parseInt(monthInput.value, 10);
+        const year = parseInt(yearInput.value, 10);
+
+        if (
+          dayInput.checkValidity() &&
+          monthInput.checkValidity() &&
+          yearInput.checkValidity()
+        ) {
+          const dob = new Date(year, month - 1, day);
+          const currentDate = new Date();
+
+          if (dob > currentDate) {
+            displayErrorMessage('Date of birth must be in the past.', 'day');
+          } else {
+            const ageInMilliseconds = currentDate - dob;
+            const ageInYears = Math.floor(
+              ageInMilliseconds / (365.25 * 24 * 60 * 60 * 1000),
+            );
+            const ageInMonths = Math.floor(
+              (ageInMilliseconds % (365.25 * 24 * 60 * 60 * 1000)) /
+                (30.44 * 24 * 60 * 60 * 1000),
+            );
+            const ageInDays = Math.floor(
+              (ageInMilliseconds % (30.44 * 24 * 60 * 60 * 1000)) /
+                (24 * 60 * 60 * 1000),
+            );
+
+            resultDiv.innerHTML = `<td> ${ageInYears} <span class="placeholder"> years </span></td> <br> <td> ${ageInMonths}<span class="placeholder"> months </span> </td> <br> <td> ${ageInDays} <span class="placeholder"> days <span> </td>`;
+          }
+        } else {
+          if (!dayInput.checkValidity()) {
+            displayErrorMessage('Must be a valid day', 'day');
+          }
+
+          if (!monthInput.checkValidity()) {
+            displayErrorMessage('Must be a valid month', 'month');
+          }
+
+          if (!yearInput.checkValidity()) {
+            displayErrorMessage('Must be in the past', 'year');
+          }
+        }
+      }
+
+      function displayErrorMessage(message, inputId) {
+        const input = document.getElementById(inputId);
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message';
+        errorDiv.innerText = message;
+        input.parentNode.appendChild(errorDiv);
+        input.classList.add('invalid');
+        input.previousElementSibling.style.color = '#f00';
+      }
+
+      function resetValidationStyles() {
+        const resultDiv = document.getElementById('result');
+        resultDiv.innerHTML = '';
+
+        const inputs = document.querySelectorAll('.input-group input');
+        inputs.forEach((input) => {
+          input.classList.remove('invalid');
+          input.previousElementSibling.style.color = '#333';
+        });
+      }
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <form id="ageForm">
+        <div class="input">
+          <div class="input-group">
+            <label for="day">DAY</label>
+            <input
+              type="number"
+              id="day"
+              placeholder="DD"
+              min="1"
+              max="31"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <label for="month">MONTH</label>
+            <input
+              type="number"
+              id="month"
+              placeholder="MM"
+              min="1"
+              max="12"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <label for="year">YEAR</label>
+            <input
+              type="number"
+              id="year"
+              placeholder="YYYY"
+              min="1900"
+              max="2100"
+              required
+            />
+          </div>
+        </div>
+        <div class="button-container">
+          <div class="line"></div>
+          <button
+            type="button"
+            onclick="calculateAge()"
+            aria-label="Calculate Age"
+          >
+            <i class="fas fa-arrow-down"></i>
+          </button>
+        </div>
+        <div id="result">
+          --<span class="placeholder"> years</span>
+          <br />
+          --<span class="placeholder"> months</span>
+          <br />
+          --<span class="placeholder"> days</span>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>
